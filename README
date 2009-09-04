@@ -1,0 +1,31 @@
+04/09/2009:
+===========
+getattributes.py and secondarygetattributes.py are a couple of python scripts for scraping the DAS server at
+partsregistry.org (or any DAS server, really). 
+
+allbricks-DDMMYYYY.tar.bz2 is the features and sequence scraped for all bricks that these scripts could find on DDMMYYYY.
+
+Usage:
+
+$ python getattributes.py http://path/to/DAS/entry_points
+
+This will pull the entry points list from the DAS server and then fetch the features and sequence for each entry point,
+putting them into subdirectories (features/ and sequences/) of whatever directory you run the script in.
+
+secondarygetattributes.py is BioBricks-specific. For some reason, not every valid BioBrick appears in the entry_points
+list, but a lot of them appear as features. This script finds named BioBricks in features files and grabs their features
+and sequences from the DAS server.
+
+secondarygetattributes.py takes no arguments, just run the script.
+
+Dependencies: lxml (easy_install lxml if your system has easy_install, http://codespeak.net/lxml if not)
+
+Known issues:
+ - lxml chokes on certain characters in text elements, e.g. '<' and '>'. This means that secondarygetattributes can't do
+   anything with those files, so we may still be missing some data.
+ - Not currently checking for any kind of HTTP errors, so any response other than 200 and the script dies. If this happens,
+   just restart it; it won't bother to redownload anything that it already has both the features and sequence for.
+ - Tags to use for identifying BioBrick names (e.g. SEGMENT and TYPE) are hardcoded; this should really be a commandline
+   option.
+ - Lots of duplicated code which really ought to be refactored out into a module.
+ - Some form of commandline help / usage notes would be polite.
