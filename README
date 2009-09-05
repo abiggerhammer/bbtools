@@ -1,3 +1,13 @@
+05/09/2009:
+===========
+sbdtp/properties.py defines a custom property, DNAProperty, for use with Google AppEngine. It stores DNA sequences using
+Bio.Seq from biopython. Note that for some reason, Bio.Seq doesn't actually validate whether the sequence conforms to the
+chosen Alphabet, but this property does take care of that, using its .validate() method.
+
+AppEngine doesn't provide a facility for filtering on custom properties, but I'm going to modify the fulltext search tool
+(see http://github.com/DocSavage/appengine-search/tree/master) so that we can search for substrings in a sequence, using
+the .find() method of Bio.Seq.
+
 04/09/2009:
 ===========
 getattributes.py and secondarygetattributes.py are a couple of python scripts for scraping the DAS server at
