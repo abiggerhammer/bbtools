@@ -1,3 +1,9 @@
+06/09/2009:
+===========
+Working on a rather hackish little script, fasta2datastore.py, which will populate a datastore using the local
+development server; this can then be exported and uploaded en masse to appspot. I don't recommend that anyone else use 
+the approach I'm using, btw; I shouldn't be using it myself. :P
+
 05/09/2009:
 ===========
 sbdtp/properties.py defines a custom property, DNAProperty, for use with Google AppEngine. It stores DNA sequences using
