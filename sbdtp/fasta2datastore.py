@@ -2,6 +2,7 @@ from Bio import SeqIO
 from lxml import etree
 
 import logging, logging.handlers, os, os.path
+from itertools import dropwhile, islice
 from optparse import OptionParser
 
 from google.appengine.api import apiproxy_stub_map
@@ -9,7 +10,7 @@ from google.appengine.api import datastore_file_stub
 from models import BasicPart, CompositePart, Feature
 
 logging.basicConfig(level=logging.INFO)
-logfile = logging.FileHandler('warnings.log', 'w')
+logfile = logging.FileHandler('warnings.log', 'a')
 logfile.setLevel(logging.WARNING)
 formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
 logfile.setFormatter(formatter)
@@ -32,11 +33,14 @@ def makePart(fasta):
     tuple = fasta.description.split('"')
     description = tuple[1]
     pieces = tuple[0].split()
+    if len(pieces) < 4:
+	partlogger.warning("Part %s's status line is too short: %s" % (fasta.name, tuple[0]))
+	return None
     status = statuses.get(pieces[1])
     if not status:
 	partlogger.warning("Part %s has an invalid status, skipping" % fasta.name)
 	return None
-    if 'D' == status:
+    if 'Deleted' == status:
 	partlogger.warning("Part %s was deleted, skipping" % fasta.name)
 	return None
     type = pieces[3]
@@ -86,6 +90,7 @@ if __name__=='__main__':
     optp.add_option("-s", "--datastore", dest="datastore", help="Path to the file to store datastore file stub data in", default=os.path.join(os.getcwd(), "datastore"))
     optp.add_option("-b", "--history", dest="history", help="Path to the file to store datastore history in", default=os.path.join(os.getcwd(), "history"))
     optp.add_option("-c", "--clear", action="store_true", dest="clear_datastore", help="Clear the datastore before starting (off by default)", default=False)
+    optp.add_option("-r", "--resume", dest="resume", help="Resume after the specified ID", default=None)
     (options, args) = optp.parse_args()
 
     if not options.fastafile or not os.path.exists(options.fastafile):	
@@ -109,7 +114,7 @@ if __name__=='__main__':
     apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)    
 
     fastas = SeqIO.parse(open(options.fastafile), 'fasta')
-    for fasta in fastas:
+    for fasta in islice(dropwhile(lambda x: x.name != options.resume, fastas), 1, None):
 	if 0 == len(fasta.seq):
 	    seqlogger.warning("Part %s has a sequence of length 0, skipping" % fasta.name)
 	    continue
