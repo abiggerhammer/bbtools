@@ -114,7 +114,9 @@ if __name__=='__main__':
     apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', datastore)    
 
     fastas = SeqIO.parse(open(options.fastafile), 'fasta')
-    for fasta in islice(dropwhile(lambda x: x.name != options.resume, fastas), 1, None):
+    if options.resume:
+    fastas = islice(dropwhile(lambda x: x.name != options.resume, fastas), 1, None):
+    for fasta in fastas:
 	if 0 == len(fasta.seq):
 	    seqlogger.warning("Part %s has a sequence of length 0, skipping" % fasta.name)
 	    continue
