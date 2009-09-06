@@ -1,3 +1,8 @@
+06/09/2009, 11:20am:
+====================
+fasta2datastore.py works, with robust logging. python fasta2datastore -h for instructions; note that you will need to
+have AppEngine (i.e., whatever directory contains google/appengine/...) in your PYTHONPATH. 
+
 06/09/2009:
 ===========
 Working on a rather hackish little script, fasta2datastore.py, which will populate a datastore using the local
